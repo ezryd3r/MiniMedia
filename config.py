@@ -1,8 +1,8 @@
 import os
 
 # Test Area Config
-plex_library = 'C:\Users\Nick\Documents\GitHub\MiniMedia\TestPlexLibrary'
-handbrake_cli = 'C:\Users\Nick\Documents\GitHub\MiniMedia\hb\HandBrakeCLI.exe'  # Handbrake location
+plex_library = []  # path to media library [string]
+handbrake_cli = []  # path to location of HandBrakeCLI.exe [string]
 hbFormat = ' --preset "Apple 720p30 Surround"'  # Handbrake settings
 allowed_movie_size = 1  # GB
 allowed_tv_size = 1  # GB
