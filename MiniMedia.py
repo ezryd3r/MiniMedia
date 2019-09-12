@@ -1,19 +1,19 @@
-
 from plexdb import PlexDB, print_movie
 from video import Movie
 import config
 import logging
 import logging.config
 
-#logging.config.fileConfig('logging.conf')
+
+# logging.config.fileConfig('logging.conf')
 # create logger
-#logger = logging.getLogger('simpleExample')
+# logger = logging.getLogger('simpleExample')
 # 'application' code
-#logger.debug('debug message')
-#logger.info('info message')
-#logger.warn('warn message')
-#logger.error('error message')
-#logger.critical('critical message')
+# logger.debug('debug message')
+# logger.info('info message')
+# logger.warn('warn message')
+# logger.error('error message')
+# logger.critical('critical message')
 # TODO get convert list for TV Show
 # TODO Implement logging before deploying to server.
 # TODO Update database with movies already converted
@@ -31,7 +31,7 @@ def get_convert_list(plexdb, allowed_size, max_convert):
             count += 1
             print("Movie to be added:")
             print_movie(row)
-# TODO Sort By Largest
+    # TODO Sort By Largest
     return conv_list
 
 
@@ -51,7 +51,7 @@ def main():
     conv_list = get_convert_list(db, config.allowed_movie_size, 5)
     for m in conv_list:
         mov = Movie(m[0])
-        #print(mov.name)
+        # print(mov.name)
 
 
 if __name__ == "__main__":
