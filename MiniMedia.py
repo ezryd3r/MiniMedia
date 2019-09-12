@@ -49,9 +49,6 @@ def main():
     dbfile = config.plexdb
     db = PlexDB(dbfile, config.plex_library)
     conv_list = get_convert_list(db, config.allowed_movie_size, 5)
-    for m in conv_list:
-        mov = Movie(m[0])
-        # print(mov.name)
 
 
 if __name__ == "__main__":
