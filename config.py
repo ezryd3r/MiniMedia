@@ -1,14 +1,23 @@
-import os
+# MiniMedia Configuration
 
-# Test Area Config
-plex_library = 'C:\Users\Nick\Documents\Coding Working Area\Plex Media Library'
-handbrake_cli = 'C:\Users\Nick\Documents\GitHub\MiniMedia\hb\HandBrakeCLI.exe'  # Handbrake location
-hbFormat = ' --preset "Apple 720p30 Surround"'  # Handbrake settings
-allowed_movie_size = 1  # GB
-allowed_tv_size = 0.01  # GB
-nConvert = 3  # Number files to convert in one go (Stops after this number of conversions)
-program_list = [('Movies', allowed_movie_size), ('TV Shows', allowed_tv_size)]
-results_file = os.path.join(plex_library, 'Archive', 'conversionresults.txt')
-# sqlite3 Database
-plexdb ='Plex_json.txt'
+#=====================================================================================================
+# plex_library[0]		Movie folder path
+# plex_library[1]		TV Show Folder path
+# handbrake_cli			HandbrakeCli.exe location
+# hb_format 			Handbrake settings
+# allowed_movie_size	Allowed Movie Size in GB
+# allowed_tv_size		Allow TV Show Size in GB
+# nConvert_movie		Number of movie files to convert in one go (Stops after this number of conversions)
+# nConvert_show 		Number of tv show files to convert in one go (Stops after this number of conversions)
+# plexdb				Name of Your json database, default='Plex_json.txt'
+# video_extensions		List of wanted video extentions default=['.mp4', '.avi', '.mkv', '.m4v']
+#=====================================================================================================
+plex_library = ['Z:\Movies','Y:']
+handbrake_cli = 'C:\Users\Nick\Documents\HandbrakeCLI\HandBrakeCLI.exe'
+hb_format = ' --preset "Fast 1080p30" --all-audio --audio-lang-list eng -E copy:ac3  --all-subtitles'
+allowed_movie_size = 5
+allowed_tv_size = 0.5
+nConvert_movie = 0
+nConvert_show = 2  
+plexdb = 'Plex_json.txt'
 video_extensions = ['.mp4', '.avi', '.mkv', '.m4v']

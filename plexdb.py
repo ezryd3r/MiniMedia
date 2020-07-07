@@ -2,8 +2,8 @@ import json
 import os
 import config
 from video import Movie, TVShow
-import logging
-import logging.config
+# import logging
+# import logging.config
 
 
 class PlexDB:
@@ -16,7 +16,7 @@ class PlexDB:
 
     def get_lib_data(self):
         if os.path.isfile(self.dbpath):
-            logging.info('Found Database, loading library data...')
+            # logging.info('Found Database, loading library data...')
             self.data = self.load_json()
         else:
             print('No database found, creating ' + self.dbpath)
@@ -24,24 +24,24 @@ class PlexDB:
             data['movies'] = []
             data['shows'] = []
             self.data = data
-            self.find_new_files('Movies')
-            # self.find_new_files('TV Shows')
+            self.find_new_files(self.plex_path[0],'Movies')
+            self.find_new_files(self.plex_path[1],'TV Shows')
             self.save_json()
 
     def save_json(self):
         with open(self.dbpath, 'w') as outfile:
-            json.dump(self.data, outfile)
+            json.dump(self.data, outfile, encoding='latin1')
 
     def load_json(self):
         with open(self.dbpath) as json_file:
             return json.load(json_file)
 
-    def find_new_files(self, library):
-        movie_path = os.path.join(self.plex_path, library)
-        for root, dirs, files in os.walk(movie_path):
+    def find_new_files(self, library, type):
+        lib_path = library
+        for root, __, files in os.walk(lib_path):
             for name in files:
                 filename = os.path.join(root, name)
-                if library is 'Movies':
+                if type is 'Movies':
                     self.add_movie(filename)
                 else:
                     self.add_show(filename)
@@ -90,16 +90,10 @@ class PlexDB:
         nShows = 0
         total_size = 0
         for m in self.data['shows']:
-            print('Title: ' + m['show'])
-            print('Season ' + str(m['season']))
-            print('Episode ' + str(m['episode']))
-            size = float(m['size']) / 1000000000
-            total_size += size
-            print('Size: ' + str(size) + 'GB')
-            print(' ')
+            print_show(m)
             nShows += 1
         print(str(nShows) + ' Episodes found.')
-        print('Total TV Show library size: ' + '{0:.2f}'.format(round(total_size, 2)) + 'GB')
+        # print('Total TV Show library size: ' + '{0:.2f}'.format(round(total_size, 2)) + 'GB')
         print(' ')
 
     def check_entry_exists(self, filename, video_type):
@@ -110,7 +104,6 @@ class PlexDB:
             return False
 
 
-# TODO Create print_show
 def print_movie(m):
     print('Title: ' + m['title'])
     print('Year: ' + str(m['year']))
@@ -121,11 +114,19 @@ def print_movie(m):
     print(' ')
 
 
+def print_show(show):
+    print('Title: ' + show['show'])
+    print('Season ' + str(show['season']))
+    print('Episode ' + str(show['episode']))
+    size = float(show['size']) / 1000000000
+    print('Size: ' + str(size) + 'GB')
+    print(' ')
+
 def main():
     dbfile = 'Plex_json.txt'
     Database = PlexDB(dbfile, config.plex_library)
     Database.find_new_files('Movies')
-    Database.find_new_files('TV Shows')
+    # Database.find_new_files('TV Shows')
     # Database.list_movies()
     # Database.list_shows()
 
