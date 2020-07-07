@@ -2,8 +2,6 @@ import json
 import os
 import config
 from video import Movie, TVShow
-# import logging
-# import logging.config
 
 
 class PlexDB:
@@ -16,8 +14,10 @@ class PlexDB:
 
     def get_lib_data(self):
         if os.path.isfile(self.dbpath):
-            # logging.info('Found Database, loading library data...')
             self.data = self.load_json()
+            self.find_new_files(self.plex_path[0],'Movies')
+            self.find_new_files(self.plex_path[1],'TV Shows')
+            self.save_json()
         else:
             print('No database found, creating ' + self.dbpath)
             data = {}
@@ -88,7 +88,6 @@ class PlexDB:
 
     def list_shows(self):
         nShows = 0
-        total_size = 0
         for m in self.data['shows']:
             print_show(m)
             nShows += 1
@@ -125,10 +124,7 @@ def print_show(show):
 def main():
     dbfile = 'Plex_json.txt'
     Database = PlexDB(dbfile, config.plex_library)
-    Database.find_new_files('Movies')
-    # Database.find_new_files('TV Shows')
-    # Database.list_movies()
-    # Database.list_shows()
+    Database.find_new_files(config.plex_library[0],'Movies')
 
 
 if __name__ == '__main__':
