@@ -3,6 +3,8 @@ import re
 import config
 import shutil
 import ntpath
+import time
+from subprocess import call
 
 
 class Video:
@@ -11,7 +13,6 @@ class Video:
         self.filename = filename
         self.name = ntpath.basename(filename)
         self.root = self.filename.replace(self.name, '')
-        #self.filename = os.path.join(self.root, self.name)
         self.created = os.path.getmtime(self.filename)
         self.size = os.stat(self.filename).st_size
 
@@ -25,39 +26,45 @@ class Video:
         if any(x in self.name for x in config.video_extensions):
             return True
 
-    def archive_video(self):
-        # Create Archive folder by removing p_path from mov_file string
-        folder_path = self.filename.replace(config.plex_library, '')
-        # Source file
-        src = self.filename
-        # Destination File
-        arch_path = os.path.join(config.plex_library, 'Archive')
-        dst = os.path.join(arch_path, folder_path)
-        dst_folder = dst.strip(self.name)
-        # Create Destination folder if required
-        if not os.path.exists(dst_folder):
-            os.makedirs(dst_folder)
-            print 'Created folder ' + dst_folder
-        # Move file to archive
-        shutil.move(src, dst)
-        print 'File ' + self.name + ' Moved to Archive'
-        return dst
-
     def get_extension(self):
         _, file_extension = os.path.splitext(self.filename)
         return file_extension
 
     def convert(self):
         # Remove File extension and change to .mp4
-        # filename, file_extension = os.path.splitext(path)
-        # dst = filename + '.mp4'
-        # print 'Source ' + src
-        # print 'Destination ' + dst
-        # # Run Handbrake
-        # subprocess.call([config.handbrake_cli, "-i", src, "-o", dst, hb_format])
-        # print 'Conversion of ' + src + ' was successful!'
-        # time.sleep(5)
-        print(self.name + ' has been converted')
+        name, ext = os.path.splitext(self.filename)
+        dst = name + '.mp4'
+        # Append original file with _old
+        src = self.rename_file(name, ext)
+        print 'Source ' + src
+        print 'Destination ' + dst
+        # Run Handbrake
+        hb_str = config.handbrake_cli + ' -i "' + src + '" -o "' + dst + '" ' + config.hb_format
+        call(hb_str)
+        successful = self.check_conversion(src,dst)
+        if successful:
+            os.remove(src)
+            print 'Conversion of ' + src + ' was successful!'
+            return True
+        else:
+            print("New file is larger than previous, removing new file")
+            os.rename(src,self.filename)
+            os.remove(dst)
+            return False
+
+
+    def rename_file(self, name, ext):
+        new_filename = name + "_old" + ext
+        os.rename(self.filename,new_filename)
+        print("File: " + self.filename + " Renamed: " +  new_filename)
+        return new_filename       
+
+    def check_conversion(self, src, dst):
+        original_size = os.stat(src).st_size
+        new_size = os.stat(dst).st_size
+        # TODO: Split these issues so that if conversion fails you don't set it as converted in the db
+        if original_size > new_size and new_size > original_size * 0.1:
+            return True
 
 
 class Movie(Video):
