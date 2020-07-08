@@ -3,8 +3,6 @@ import config
 from video import Movie, TVShow
 import pickle
 
-# TODO Remove _old files
-
 class PlexDB:
 
     def __init__(self, dbpath, plex_path=config.plex_library):
@@ -45,11 +43,18 @@ class PlexDB:
         lib_path = library
         for root, __, files in os.walk(lib_path):
             for name in files:
+                # Check this isn't a leftover _old file
                 filename = os.path.join(root, name)
-                if type is 'Movies':
-                    self.add_movie(filename)
+                title, __ = os.path.splitext(filename)
+                last_chars = title[-4:]
+                if last_chars == "_old":
+                    print( "Removing leftover file " + name)
+                    os.remove(filename)
                 else:
-                    self.add_show(filename)
+                    if type is 'Movies':
+                        self.add_movie(filename)
+                    else:
+                        self.add_show(filename)
 
     def add_movie(self, filename):
         movie = Movie(filename)
