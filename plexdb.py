@@ -1,8 +1,9 @@
-import json
 import os
 import config
 from video import Movie, TVShow
+import pickle
 
+# TODO Remove _old files
 
 class PlexDB:
 
@@ -14,27 +15,31 @@ class PlexDB:
 
     def get_lib_data(self):
         if os.path.isfile(self.dbpath):
-            self.data = self.load_json()
+            print("Database Found!")
+            self.data = self.load_db()
+            print("....Checking for new Movies....")
             self.find_new_files(self.plex_path[0],'Movies')
+            print("....Checking for new TV Shows....")
             self.find_new_files(self.plex_path[1],'TV Shows')
-            self.save_json()
+            self.save_db()
         else:
             print('No database found, creating ' + self.dbpath)
             data = {}
             data['movies'] = []
             data['shows'] = []
             self.data = data
+            print("....Checking for new Movies....")
             self.find_new_files(self.plex_path[0],'Movies')
+            print("....Checking for new TV Shows....")
             self.find_new_files(self.plex_path[1],'TV Shows')
-            self.save_json()
+            self.save_db()
 
-    def save_json(self):
-        with open(self.dbpath, 'w') as outfile:
-            json.dump(self.data, outfile, encoding='latin1')
+    def save_db(self):
+        pickle.dump( self.data, open(self.dbpath, 'wb' ) )
 
-    def load_json(self):
-        with open(self.dbpath) as json_file:
-            return json.load(json_file)
+    def load_db(self):
+        data = pickle.load( open(self.dbpath, 'rb' ) )
+        return data
 
     def find_new_files(self, library, type):
         lib_path = library
@@ -102,6 +107,15 @@ class PlexDB:
         else:
             return False
 
+    def clean_plexdb(self):
+        for db, lib in self.data.iteritems():
+            print("...Checking for extra " + db + "...")
+            for f in lib:
+                if  not os.path.isfile(f['filename']):
+                    print(f['filename'] + " not found!")
+                    lib.remove(f)
+        self.save_db()
+
 
 def print_movie(m):
     print('Title: ' + m['title'])
@@ -122,9 +136,9 @@ def print_show(show):
     print(' ')
 
 def main():
-    dbfile = 'Plex_json.txt'
+    dbfile = config.plexdb
     Database = PlexDB(dbfile, config.plex_library)
-    Database.find_new_files(config.plex_library[0],'Movies')
+    Database.clean_plexdb()
 
 
 if __name__ == '__main__':

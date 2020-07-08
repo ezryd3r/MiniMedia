@@ -2,11 +2,7 @@ from plexdb import PlexDB, print_movie, print_show
 import config
 from video import Movie, TVShow
 
-# TODO convert_files function
-# TODO fix updating converted status
-# TODO update new filename extension in plexdb once converted
 # TODO Implement logging before deploying to server.
-# TODO Update database with movies already converted
 
 
 def get_convert_list_movies(plexdb, allowed_size, max_convert):
@@ -16,7 +12,7 @@ def get_convert_list_movies(plexdb, allowed_size, max_convert):
         size = row['size']
         conv = row['converted']
         if check_size(size, allowed_size * 1000000000) and check_converted(conv):
-            if count <= max_convert:
+            if count >= max_convert:
                 return conv_list
             else:
                 conv_list.append((row['filename'], size))
@@ -60,8 +56,8 @@ def convert_movies(plexdb,file_list):
             for fdb in plexdb.data['movies']:
                 if fdb['filename'] == filename:
                     fdb['converted'] = 'Yes'
-                    print(filename + ' has been changed to converted')
-                    plexdb.save_json()
+                    print(filename + ' converted status has been changed to Yes.')
+                    plexdb.save_db
                     return
 
 def convert_shows(plexdb,file_list):
@@ -74,7 +70,7 @@ def convert_shows(plexdb,file_list):
                 if fdb['filename'] == filename:
                     fdb['converted'] = 'Yes'
                     print(filename + ' has been changed to converted')
-                    plexdb.save_json()
+                    plexdb.save_db()
                     return
 
 
@@ -86,6 +82,7 @@ def main():
     conv_list_shows = get_convert_list_shows(db, config.allowed_tv_size, config.nConvert_show)
     convert_movies(db,conv_list_movies)
     convert_shows(db,conv_list_shows)
+    db.clean_plexdb()
 
 
 if __name__ == "__main__":
