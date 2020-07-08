@@ -1,6 +1,4 @@
-config.pyc
-video.pyc
-plexdb.pyc
-Plex_json.txt
+*.pyc
 config.py
 MediaDB.p
+.vscode
