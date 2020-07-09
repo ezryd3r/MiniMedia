@@ -78,11 +78,11 @@ def convert_shows(plexdb,file_list):
 def main():
     dbfile = config.plexdb
     db = PlexDB(dbfile, config.plex_library)
+    db.clean_plexdb()
     conv_list_movies = get_convert_list_movies(db, config.allowed_movie_size, config.nConvert_movie)
     conv_list_shows = get_convert_list_shows(db, config.allowed_tv_size, config.nConvert_show)
     convert_movies(db,conv_list_movies)
     convert_shows(db,conv_list_shows)
-    db.clean_plexdb()
 
 
 if __name__ == "__main__":

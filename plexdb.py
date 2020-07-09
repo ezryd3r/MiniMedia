@@ -43,13 +43,11 @@ class PlexDB:
         lib_path = library
         for root, __, files in os.walk(lib_path):
             for name in files:
-                # Check this isn't a leftover _old file
+                """ Check this isn't a leftover _old file """
                 filename = os.path.join(root, name)
-                title, __ = os.path.splitext(filename)
-                last_chars = title[-4:]
-                if last_chars == "_old":
-                    print( "Removing leftover file " + name)
-                    os.remove(filename)
+                if "_old" in name:
+                    print( "Reverting leftover file " + name)
+                    os.rename(filename,filename.replace("_old",""))
                 else:
                     if type is 'Movies':
                         self.add_movie(filename)
@@ -114,7 +112,7 @@ class PlexDB:
 
     def clean_plexdb(self):
         for db, lib in self.data.iteritems():
-            print("...Checking for extra " + db + "...")
+            print("...Checking for surplus " + db + "...")
             for f in lib:
                 if  not os.path.isfile(f['filename']):
                     print(f['filename'] + " not found!")
