@@ -40,7 +40,7 @@ class Video:
         print 'Destination ' + dst
         # Run Handbrake
         hb_str = config.handbrake_cli + ' -i "' + src + '" -o "' + dst + '" ' + config.hb_format
-        call(hb_str)
+        call(hb_str, shell=True)
         successful = self.check_conversion(src,dst)
         if successful:
             os.remove(src)
