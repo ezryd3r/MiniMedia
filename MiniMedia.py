@@ -16,9 +16,7 @@ def get_convert_list_movies(plexdb, allowed_size, max_convert):
             else:
                 conv_list.append((row['filename'], size))
                 count += 1
-                print("Movie to be converted:")
-                logging.info("Movie to be converted:")
-                print_movie(row)
+                logger.info("Movie to be converted:" + row['title'])
     return conv_list
 
 def get_convert_list_shows(plexdb, allowed_size, max_convert):
@@ -31,8 +29,7 @@ def get_convert_list_shows(plexdb, allowed_size, max_convert):
             if count <= max_convert:
                 conv_list.append((row['filename'], size))
                 count += 1
-                print("Show to be converted:")
-                print_show(row)
+                logger.info("Show to be converted:" + row['show'])
             else:
                 return conv_list
     return conv_list
