@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from plexdb import PlexDB, print_movie, print_show
 import config
 from video import Movie, TVShow
