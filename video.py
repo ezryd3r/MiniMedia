@@ -5,6 +5,7 @@ import shutil
 import ntpath
 import time
 from subprocess import call
+from config import logger
 
 
 class Video:
@@ -36,18 +37,18 @@ class Video:
         dst = name + '.mp4'
         # Append original file with _old
         src = self.rename_file(name, ext)
-        print 'Source ' + src
-        print 'Destination ' + dst
+        logger.info('Source ' + src)
+        logger.info('Destination ' + dst)
         # Run Handbrake
         hb_str = config.handbrake_cli + ' -i "' + src + '" -o "' + dst + '" ' + config.hb_format
         call(hb_str, shell=True)
         successful = self.check_conversion(src,dst)
         if successful:
             os.remove(src)
-            print 'Conversion of ' + src + ' was successful!'
+            logger.info('Conversion of ' + src + ' was successful!')
             return True
         else:
-            print("New file is larger than previous, removing new file")
+            logger.info("New file is larger than previous, removing new file")
             os.rename(src,self.filename)
             os.remove(dst)
             return False
@@ -56,7 +57,7 @@ class Video:
     def rename_file(self, name, ext):
         new_filename = name + "_old" + ext
         os.rename(self.filename,new_filename)
-        print("File: " + self.filename + " Renamed: " +  new_filename)
+        logger.info("File: " + self.filename + " Renamed: " +  new_filename)
         return new_filename       
 
     def check_conversion(self, src, dst):
@@ -88,11 +89,3 @@ class TVShow(Video):
         s = re.findall(r"S(\d{1,2})", self.name)
         e = re.findall(r"E(\d{1,2})", self.name)
         return s[0], e[0]
-
-    def check_new_show(self, c):
-        c.execute("SELECT id FROM shows WHERE Title = ?", (self.name,))
-        data = c.fetchall()
-        if len(data) == 0:
-            return True
-        else:
-            return False

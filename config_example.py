@@ -6,6 +6,12 @@
 
 # MiniMedia Configuration
 
+import logging
+from logging.config import fileConfig
+
+fileConfig('logging_config.ini')
+logger = logging.getLogger(__name__)
+
 #=====================================================================================================
 # plex_library[0]		Movie folder path
 # plex_library[1]		TV Show Folder path
@@ -25,5 +31,5 @@ allowed_movie_size = 5
 allowed_tv_size = 0.5
 nConvert_movie = 0
 nConvert_show = 2  
-plexdb = 'Plex_json.txt'
+plexdb = 'MediaDB.p'
 video_extensions = ['.mp4', '.avi', '.mkv', '.m4v']

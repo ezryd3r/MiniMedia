@@ -1,8 +1,7 @@
 from plexdb import PlexDB, print_movie, print_show
 import config
 from video import Movie, TVShow
-
-# TODO Implement logging before deploying to server.
+from config import logger
 
 
 def get_convert_list_movies(plexdb, allowed_size, max_convert):
@@ -18,6 +17,7 @@ def get_convert_list_movies(plexdb, allowed_size, max_convert):
                 conv_list.append((row['filename'], size))
                 count += 1
                 print("Movie to be converted:")
+                logging.info("Movie to be converted:")
                 print_movie(row)
     return conv_list
 
@@ -56,7 +56,7 @@ def convert_movies(plexdb,file_list):
             for fdb in plexdb.data['movies']:
                 if fdb['filename'] == filename:
                     fdb['converted'] = 'Yes'
-                    print(filename + ' converted status has been changed to Yes.')
+                    logger.info(filename + ' converted status has been changed to Yes.')
                     plexdb.save_db
                     return
 
@@ -69,13 +69,14 @@ def convert_shows(plexdb,file_list):
             for fdb in plexdb.data['shows']:
                 if fdb['filename'] == filename:
                     fdb['converted'] = 'Yes'
-                    print(filename + ' has been changed to converted')
+                    logger.info(filename + ' has been changed to converted')
                     plexdb.save_db()
                     return
 
 
 
 def main():
+    logger.info("MiniMedia Started...")
     dbfile = config.plexdb
     db = PlexDB(dbfile, config.plex_library)
     db.clean_plexdb()

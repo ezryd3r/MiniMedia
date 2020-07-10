@@ -2,6 +2,7 @@ import os
 import config
 from video import Movie, TVShow
 import pickle
+from config import logger
 
 class PlexDB:
 
@@ -13,22 +14,21 @@ class PlexDB:
 
     def get_lib_data(self):
         if os.path.isfile(self.dbpath):
-            print("Database Found!")
             self.data = self.load_db()
-            print("....Checking for new Movies....")
+            logger.info("Checking for new Movies....")
             self.find_new_files(self.plex_path[0],'Movies')
-            print("....Checking for new TV Shows....")
+            logger.info("Checking for new TV Shows....")
             self.find_new_files(self.plex_path[1],'TV Shows')
             self.save_db()
         else:
-            print('No database found, creating ' + self.dbpath)
+            logger.info('No database found, creating ' + self.dbpath)
             data = {}
             data['movies'] = []
             data['shows'] = []
             self.data = data
-            print("....Checking for new Movies....")
+            logger.info("Checking for new Movies....")
             self.find_new_files(self.plex_path[0],'Movies')
-            print("....Checking for new TV Shows....")
+            logger.info("Checking for new TV Shows....")
             self.find_new_files(self.plex_path[1],'TV Shows')
             self.save_db()
 
@@ -46,7 +46,7 @@ class PlexDB:
                 """ Check this isn't a leftover _old file """
                 filename = os.path.join(root, name)
                 if "_old" in name:
-                    print( "Reverting leftover file " + name)
+                    logger.info( "Reverting leftover file " + name)
                     os.rename(filename,filename.replace("_old",""))
                 else:
                     if type is 'Movies':
@@ -65,7 +65,7 @@ class PlexDB:
                 'created': movie.created,
                 'converted': 'No'
             })
-            print(movie.name + ' added!')
+            logger.info(movie.name + ' added!')
 
     def add_show(self, filename):
         show = TVShow(filename)
@@ -80,7 +80,7 @@ class PlexDB:
                 'created': show.created,
                 'converted': 'No'
             })
-            print(show.name + ' added!')
+            logger.info(show.name + ' added!')
 
     def list_movies(self):
         nMovies = 0
@@ -112,10 +112,10 @@ class PlexDB:
 
     def clean_plexdb(self):
         for db, lib in self.data.iteritems():
-            print("...Checking for surplus " + db + "...")
+            logger.info("Checking for surplus " + db + "...")
             for f in lib:
                 if  not os.path.isfile(f['filename']):
-                    print(f['filename'] + " not found!")
+                    logger.info(f['filename'] + " not found!")
                     lib.remove(f)
         self.save_db()
 
