@@ -8,8 +8,10 @@
 
 import logging
 from logging.config import fileConfig
+import os
 
-fileConfig('logging_config.ini')
+BASE_DIR=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+fileConfig(os.path.join(BASE_DIR, 'MiniMedia','logging_config.ini')) # Needs full url for some reason
 logger = logging.getLogger(__name__)
 
 #=====================================================================================================
