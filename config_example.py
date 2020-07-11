@@ -10,10 +10,6 @@ import logging
 from logging.config import fileConfig
 import os
 
-BASE_DIR=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-fileConfig(os.path.join(BASE_DIR, 'MiniMedia','logging_config.ini')) # Needs full url for some reason
-logger = logging.getLogger(__name__)
-
 #=====================================================================================================
 # plex_library[0]		Movie folder path
 # plex_library[1]		TV Show Folder path
@@ -35,3 +31,58 @@ nConvert_movie = 0
 nConvert_show = 2  
 plexdb = 'MediaDB.p'
 video_extensions = ['.mp4', '.avi', '.mkv', '.m4v']
+#=====================================================================================================
+
+""" Database Location """
+BASE_DIR=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+plexdb = os.path.join(BASE_DIR,'MiniMedia','MediaDB.p')
+
+
+""" Setup Logging"""
+LOG_PATH = os.path.join(BASE_DIR,'MiniMedia','MiniMedia.log')
+
+LOGGING_CONFIG = { 
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': { 
+        'standard': { 
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': { 
+        'console': { 
+            'level': 'INFO',
+            'formatter': 'standard',
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',  # Default is stderr
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'level': 'INFO',
+            'formatter': 'standard',
+            'filename': LOG_PATH,
+            'mode': 'a',
+    },
+    },
+    'loggers': { 
+        '': {  # root logger
+            'handlers': ['console','file'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'my.packg': { 
+            'handlers': ['console','file'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        '__main__': {  # if __name__ == '__main__'
+            'handlers': ['console','file'],
+            'level': 'INFO',
+            'propagate': False
+        },
+    } 
+}
+
+# Run once at startup:
+logging.config.dictConfig(LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
