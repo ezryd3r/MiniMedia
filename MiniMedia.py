@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
-from plexdb import PlexDB, print_movie, print_show
 import config
+from plexdb import PlexDB, print_movie, print_show
 from video import Movie, TVShow
-from config import logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_convert_list_movies(plexdb, allowed_size, max_convert):
@@ -57,20 +59,19 @@ def convert_movies(plexdb,file_list):
                     fdb['converted'] = 'Yes'
                     logger.info(filename + ' converted status has been changed to Yes.')
                     plexdb.save_db
-                    return
 
 def convert_shows(plexdb,file_list):
     for f in file_list:
         filename = f[0]
         show = TVShow(filename)
         success = show.convert()
+        success = True
         if success:
             for fdb in plexdb.data['shows']:
                 if fdb['filename'] == filename:
                     fdb['converted'] = 'Yes'
                     logger.info(filename + ' has been changed to converted')
                     plexdb.save_db()
-                    return
 
 
 
@@ -83,6 +84,7 @@ def main():
     conv_list_shows = get_convert_list_shows(db, config.allowed_tv_size, config.nConvert_show)
     convert_movies(db,conv_list_movies)
     convert_shows(db,conv_list_shows)
+    logger.info("...MiniMedia Shutting Down.")
 
 
 if __name__ == "__main__":

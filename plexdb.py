@@ -1,8 +1,12 @@
 import os
 import config
+import video
 from video import Movie, TVShow
 import pickle
-from config import logger
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class PlexDB:
 

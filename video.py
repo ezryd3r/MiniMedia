@@ -5,8 +5,9 @@ import shutil
 import ntpath
 import time
 from subprocess import call
-from config import logger
+import logging
 
+logger = logging.getLogger(__name__)
 
 class Video:
 

@@ -2,5 +2,4 @@
 config.py
 MediaDB.p
 .vscode
-MiniMedia.logs
-fix.py
+MiniMedia.log
